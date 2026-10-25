@@ -1,0 +1,63 @@
+{
+  "pipeline_run_timestamp_utc": "2026-10-25T05:51:42.061534+00:00",
+  "config": {
+    "delivery_start_date": "2026-01-01",
+    "delivery_end_date": "2026-01-31",
+    "decision_cutoff_time": "11:00",
+    "decision_timezone": "UTC",
+    "base_url": "https://data.elexon.co.uk/bmrs/api/v1"
+  },
+  "actuals_ingestion": {
+    "dataset": "FUELHH",
+    "settlementDateFrom": "2026-01-01",
+    "settlementDateTo": "2026-01-31",
+    "fuelType": "WIND",
+    "request_count": 1,
+    "failed_requests": [],
+    "raw_records_count": 1488,
+    "elapsed_seconds": 0.0,
+    "source": "local_cache"
+  },
+  "forecasts_ingestion": {
+    "dataset": "WINDFOR",
+    "publishDateTimeFrom": "2025-12-30T00:00:00+00:00",
+    "publishDateTimeTo": "2026-01-31T23:59:59+00:00",
+    "chunk_days": 7,
+    "total_chunks": 0,
+    "successful_chunks": 0,
+    "failed_chunks": [],
+    "raw_records_count": 19272,
+    "elapsed_seconds": 0.0,
+    "source": "local_cache"
+  },
+  "actuals_normalization": {
+    "total_expected_hours": 744,
+    "complete_hours": 744,
+    "incomplete_hours": 0,
+    "missing_hours": 0,
+    "conflicts_count": 0
+  },
+  "forecasts_normalization": {
+    "deduplicated_count": 19272,
+    "duplicate_count": 0,
+    "conflicts_detected": 0,
+    "distinct_publish_times": 264,
+    "distinct_start_times": 841
+  },
+  "evaluation_dataset": {
+    "total_intervals": 744,
+    "complete_evaluation_pairs": 744,
+    "intervals_with_forecast": 744,
+    "intervals_missing_forecast": 0,
+    "intervals_with_actual": 744,
+    "intervals_missing_actual": 0,
+    "is_fully_complete": true,
+    "earliest_delivery": "2026-01-01T00:00:00+00:00",
+    "latest_delivery": "2026-01-31T23:00:00+00:00"
+  },
+  "output_files": {
+    "canonical_csv": "E:\\windX\\kjhwr\\backend\\data\\processed\\canonical_evaluation_dataset.csv",
+    "canonical_json": "E:\\windX\\kjhwr\\backend\\data\\processed\\canonical_evaluation_dataset.json",
+    "summary_json": "E:\\windX\\kjhwr\\backend\\data\\processed\\ingestion_summary.json"
+  }
+}
