@@ -10,6 +10,9 @@ server {
     # Dynamic backend upstream definition from environment variable
     set $backend "${BACKEND_URL}";
 
+    # Enable SNI for HTTPS upstreams
+    proxy_ssl_server_name on;
+
     # Enable gzip compression for modern text and JSON assets
     gzip on;
     gzip_vary on;

@@ -4,6 +4,8 @@ An energy-market intelligence portal that evaluates Great Britain's national win
 
 The application ingests transmission-level data from the Elexon BMRS market system, normalizes differing temporal resolutions, and calculates key forecast accuracy, systematic bias, and volumetric miss metrics.
 
+**Live Deployed Application**: [https://wind-forecast-frontend.onrender.com](https://wind-forecast-frontend.onrender.com)
+
 ---
 
 ## Key Capabilities
@@ -167,5 +169,5 @@ This repository includes a Render Blueprint specification (`render.yaml`) to dep
    - `wind-forecast-frontend`: Nginx reverse proxy and React SPA serving static assets and proxying `/api/` to the backend via Render's private network.
 5. Click **Apply** to build and launch the services.
 
-*Deployment status: Pending live deployment. A public deployment URL will be added once deployment is completed.*
+*Live Deployment URL*: [https://wind-forecast-frontend.onrender.com](https://wind-forecast-frontend.onrender.com)
 
