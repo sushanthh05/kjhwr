@@ -102,11 +102,11 @@ npm run dev
   - Day-ahead forecasts: `WINDFOR` published multi-vintage forecast streams.
 - **Evaluation Period**: January 1, 2026 00:00 UTC through January 31, 2026 23:00 UTC (744 delivery hours).
 - **Temporal Resolution Reconciliation**: `FUELHH` actuals are reported at 30-minute intervals. To match hourly `WINDFOR` forecasts, the two half-hourly actual power values are averaged: `(:00 + :30) / 2`. Averaging power (MW) preserves the true hourly delivery rate (summing would erroneously double it).
-- **Decision Cutoff Assumption**: Day-ahead procurement decisions require forecasts fixed before market clearing. As a project evaluation assumption, the system selects the latest forecast published on or before **11:00 UTC on the day prior to delivery ($D-1$)**. Forecasts published after cutoff are excluded to ensure zero look-ahead bias.
+- **Decision Cutoff Assumption**: Day-ahead procurement decisions require forecasts fixed before market clearing. As a project evaluation assumption, the system selects the latest forecast published on or before **11:00 UTC on the day prior to delivery (D - 1)**. Forecasts published after cutoff are excluded to ensure zero look-ahead bias.
 - **Error Sign Convention**:
-  $$\text{error\_mw} = \text{forecast\_generation\_mw} - \text{actual\_generation\_mw}$$
-  - **Positive ($> 0$)**: Overforecast (forecast exceeded actual generation).
-  - **Negative ($< 0$)**: Underforecast (forecast fell short of actual generation).
+  $$\text{Error (MW)} = \text{Forecast (MW)} - \text{Actual (MW)}$$
+  - **Positive (> 0 MW)**: Overforecast (forecast exceeded actual generation).
+  - **Negative (< 0 MW)**: Underforecast (forecast fell short of actual generation).
 
 ---
 
