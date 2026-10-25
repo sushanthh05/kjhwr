@@ -29,8 +29,10 @@ FROM nginx:1.27-alpine
 # Remove default Nginx welcome site
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy custom reverse proxy & SPA fallback configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Nginx template and dynamic runtime entrypoint script
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Copy compiled static assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -38,9 +40,10 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Expose internal HTTP port
 EXPOSE 80
 
-# Lightweight container health check
+# Lightweight container health check respecting dynamic PORT
 HEALTHCHECK --interval=20s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget -q -O /dev/null http://127.0.0.1/ || exit 1
+  CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-80}/" || exit 1
 
-# Start Nginx in foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Start container via dynamic entrypoint script
+ENTRYPOINT ["/docker-entrypoint.sh"]
+

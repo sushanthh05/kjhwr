@@ -10,13 +10,14 @@ services:
     container_name: wind-forecast-backend
     restart: unless-stopped
     environment:
+      - PORT=8000
       # Allow requests from Nginx container host port and local dev ports
       - CORS_ALLOWED_ORIGINS=http://localhost:8080,http://127.0.0.1:8080,http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173
     expose:
       # Expose port 8000 internally to the bridge network (NOT published on host to enforce Nginx reverse proxy)
       - "8000"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      test: ["CMD", "python", "-c", "import urllib.request, os; port = os.environ.get('PORT', '8000'); urllib.request.urlopen(f'http://127.0.0.1:{port}/health', timeout=3)"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -34,6 +35,9 @@ services:
     image: wind-forecast-frontend:latest
     container_name: wind-forecast-frontend
     restart: unless-stopped
+    environment:
+      - PORT=80
+      - BACKEND_URL=http://backend:8000
     ports:
       # Host port 8081 (or PORT override) mapped to Nginx container port 80
       - "${PORT:-8081}:80"

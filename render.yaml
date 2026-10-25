@@ -1,0 +1,43 @@
+# Render Blueprint Configuration for Wind Forecast Intelligence
+# Repository: https://github.com/sushanthh05/kjhwr
+# Deploys FastAPI backend and React + Nginx frontend as Docker web services
+
+services:
+  # 1. FastAPI Analytics Backend Service
+  - type: web
+    name: wind-forecast-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: CORS_ALLOWED_ORIGINS
+        value: "*"
+
+  # 2. React + Nginx Reverse Proxy Frontend Service
+  - type: web
+    name: wind-forecast-frontend
+    runtime: docker
+    dockerfilePath: frontend/Dockerfile
+    dockerContext: frontend
+    plan: free
+    region: oregon
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 80
+      # Route API requests to the backend service via Render's private network
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: wind-forecast-backend
+          property: host
+      - key: BACKEND_PORT
+        fromService:
+          type: web
+          name: wind-forecast-backend
+          property: port

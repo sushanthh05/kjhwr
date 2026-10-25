@@ -156,4 +156,16 @@ In accordance with project governance standards, AI tools (Google Antigravity / 
 
 ## Deployment
 
-A public deployment URL will be added once external hosting deployment is completed.
+This repository includes a Render Blueprint specification (`render.yaml`) to deploy both the FastAPI backend and Nginx-served frontend as containerized Web Services communicating over Render's private network.
+
+### Render Blueprint Deployment Steps
+1. Push the repository to GitHub (`https://github.com/sushanthh05/kjhwr`).
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** and select **Blueprint**.
+3. Connect your GitHub repository.
+4. Render will parse `render.yaml` and configure two connected Docker web services:
+   - `wind-forecast-backend`: FastAPI analytics service listening on `0.0.0.0` with `/health` checks.
+   - `wind-forecast-frontend`: Nginx reverse proxy and React SPA serving static assets and proxying `/api/` to the backend via Render's private network.
+5. Click **Apply** to build and launch the services.
+
+*Deployment status: Pending live deployment. A public deployment URL will be added once deployment is completed.*
+
