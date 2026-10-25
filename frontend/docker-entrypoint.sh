@@ -20,10 +20,19 @@ if ! echo "$BACKEND_URL" | grep -qE '^https?://'; then
     export BACKEND_URL="http://$BACKEND_URL"
 fi
 
+# On Render Free Tier, private inter-service networking is disabled.
+# If BACKEND_URL is set to the internal hostname, automatically route to the live Render backend URL:
+case "$BACKEND_URL" in
+    *wind-forecast-backend*)
+        export BACKEND_URL="https://wind-forecast-backend-yb3v.onrender.com"
+        ;;
+esac
+
 # If BACKEND_URL still doesn't have a port and is an internal hostname (no dot in domain):
 if ! echo "$BACKEND_URL" | grep -qE '(:[0-9]+|\.onrender\.com|\.com|\.net|\.org)'; then
     export BACKEND_URL="${BACKEND_URL}:8000"
 fi
+
 
 # Extract hostname and port for HTTP Host and TLS SNI headers
 export BACKEND_HOST=$(echo "$BACKEND_URL" | sed -e 's|^https\?://||' -e 's|/.*$||')
