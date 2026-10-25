@@ -99,11 +99,26 @@ async function request(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    const errorMessage =
-      (data && typeof data === 'object' && (data.detail || data.message)) ||
-      (typeof data === 'string' && data.length > 0 ? data : `HTTP ${response.status}: ${response.statusText}`)
+    // Auto-retry on Render Free Tier cold start errors (502 / 504)
+    const retryCount = options._retryCount || 0
+    if ((response.status === 502 || response.status === 504) && retryCount < 2 && !signal?.aborted) {
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      return request(endpoint, { ...options, _retryCount: retryCount + 1 })
+    }
+
+    let errorMessage
+    if (data && typeof data === 'object' && (data.detail || data.message)) {
+      errorMessage = data.detail || data.message
+    } else if (typeof data === 'string' && data.length > 0 && !data.includes('<!DOCTYPE') && !data.includes('<html')) {
+      errorMessage = data
+    } else if (response.status === 502 || response.status === 504) {
+      errorMessage = 'Backend service is waking up from inactivity (Render Free Tier cold start). Please wait a moment and click Retry Request.'
+    } else {
+      errorMessage = `HTTP ${response.status}: ${response.statusText || 'Server Error'}`
+    }
     throw new ApiError(errorMessage, response.status, data)
   }
+
 
   return data
 }
