@@ -4,7 +4,8 @@ An energy-market intelligence portal that evaluates Great Britain's national win
 
 The application ingests transmission-level data from the Elexon BMRS market system, normalizes differing temporal resolutions, and calculates key forecast accuracy, systematic bias, and volumetric miss metrics.
 
-**Live Deployed Application**: [https://wind-forecast-frontend.onrender.com](https://wind-forecast-frontend.onrender.com)
+- **Live Application**: [https://wind-forecast-frontend.onrender.com/](https://wind-forecast-frontend.onrender.com/)
+- **GitHub Repository**: [https://github.com/sushanthh05/kjhwr](https://github.com/sushanthh05/kjhwr)
 
 ---
 
@@ -53,7 +54,7 @@ The application runs via Docker Compose with a pre-packaged canonical January 20
 
 ```powershell
 # 1. Clone repository
-git clone https://github.com/<username>/kjhwr.git
+git clone https://github.com/sushanthh05/kjhwr.git
 cd kjhwr
 
 # 2. Start services in background
@@ -158,16 +159,12 @@ In accordance with project governance standards, AI tools (Google Antigravity / 
 
 ## Deployment
 
-This repository includes a Render Blueprint specification (`render.yaml`) to deploy both the FastAPI backend and Nginx-served frontend as containerized Web Services communicating over Render's private network.
+The application is deployed on Render using a Blueprint configuration (`render.yaml`), orchestrating the FastAPI backend and Nginx-served React frontend as containerized Docker Web Services:
 
-### Render Blueprint Deployment Steps
-1. Push the repository to GitHub (`https://github.com/sushanthh05/kjhwr`).
-2. In the [Render Dashboard](https://dashboard.render.com), click **New +** and select **Blueprint**.
-3. Connect your GitHub repository.
-4. Render will parse `render.yaml` and configure two connected Docker web services:
-   - `wind-forecast-backend`: FastAPI analytics service listening on `0.0.0.0` with `/health` checks.
-   - `wind-forecast-frontend`: Nginx reverse proxy and React SPA serving static assets and proxying `/api/` to the backend via Render's private network.
-5. Click **Apply** to build and launch the services.
+- **Live Application**: [https://wind-forecast-frontend.onrender.com/](https://wind-forecast-frontend.onrender.com/)
+- **Backend Service**: [https://wind-forecast-backend-yb3v.onrender.com/](https://wind-forecast-backend-yb3v.onrender.com/) (`/health`, `/docs`)
+- **GitHub Repository**: [https://github.com/sushanthh05/kjhwr](https://github.com/sushanthh05/kjhwr)
 
-*Live Deployment URL*: [https://wind-forecast-frontend.onrender.com](https://wind-forecast-frontend.onrender.com)
-
+### Deployment Architecture
+- **Backend Web Service**: FastAPI analytics service running on Python 3.13-slim with pre-packaged canonical January 2026 data.
+- **Frontend Web Service**: React 19 production build served via Nginx 1.27 Alpine, reverse-proxying `/api/` and `/health` requests to the live backend service with full TLS SNI support.
