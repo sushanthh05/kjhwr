@@ -25,15 +25,19 @@ if ! echo "$BACKEND_URL" | grep -qE '(:[0-9]+|\.onrender\.com|\.com|\.net|\.org)
     export BACKEND_URL="${BACKEND_URL}:8000"
 fi
 
+# Extract hostname and port for HTTP Host and TLS SNI headers
+export BACKEND_HOST=$(echo "$BACKEND_URL" | sed -e 's|^https\?://||' -e 's|/.*$||')
+export BACKEND_SNI=$(echo "$BACKEND_HOST" | sed -e 's|:.*$||')
+
 # Dynamically extract nameservers from /etc/resolv.conf for runtime DNS resolution
 RESOLVER=$(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.conf)
 export RESOLVER="${RESOLVER:-127.0.0.11 1.1.1.1 8.8.8.8}"
 
-echo "Starting Nginx on port ${PORT} with backend ${BACKEND_URL} and DNS resolver ${RESOLVER}"
+echo "Starting Nginx on port ${PORT} with backend ${BACKEND_URL} (host: ${BACKEND_HOST}, sni: ${BACKEND_SNI}) and DNS resolver ${RESOLVER}"
 
-# Substitute only PORT, BACKEND_URL, and RESOLVER into Nginx config template
+# Substitute PORT, BACKEND_URL, BACKEND_HOST, BACKEND_SNI, and RESOLVER into Nginx config template
 # Preserves standard Nginx variables ($host, $uri, $remote_addr, $proxy_add_x_forwarded_for, etc.)
-envsubst '${PORT} ${BACKEND_URL} ${RESOLVER}' < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
+envsubst '${PORT} ${BACKEND_URL} ${BACKEND_HOST} ${BACKEND_SNI} ${RESOLVER}' < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
 
 # Validate Nginx configuration syntax before starting
 nginx -t
