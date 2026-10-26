@@ -47,8 +47,18 @@ export default function App() {
   // Backend Connectivity
   const [connectionStatus, setConnectionStatus] = useState('idle') // 'idle' | 'checking' | 'connected' | 'error'
   const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [loadingElapsedSec, setLoadingElapsedSec] = useState(0)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [globalError, setGlobalError] = useState(null)
+
+  // Track initial loading elapsed time to detect Render cold start
+  useEffect(() => {
+    if (!isInitialLoading) return
+    const timer = setInterval(() => {
+      setLoadingElapsedSec((prev) => prev + 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [isInitialLoading])
 
   // Date Filtering (Default: Full January 2026 Scope)
   const [startDate, setStartDate] = useState('2026-01-01')
@@ -121,6 +131,7 @@ export default function App() {
     setIsRefreshing(true)
     setConnectionStatus('checking')
     setGlobalError(null)
+    setLoadingElapsedSec(0)
     setIsErrorsLoading(true)
     setIsWorstMissesLoading(true)
 
@@ -230,14 +241,25 @@ export default function App() {
             title="Backend Service Connection Error"
             message={globalError}
             onRetry={loadAllDashboardData}
-            height="200px"
+            height="220px"
+            autoRetry={true}
+            autoRetrySeconds={8}
           />
         )}
 
         {/* Initial Loading Screen */}
         {isInitialLoading && !globalError ? (
           <LoadingState
-            message="Connecting to Elexon BMRS Analytics API and compiling January 2026 telemetry..."
+            message={
+              loadingElapsedSec >= 5
+                ? 'Connecting to Wind Forecast Cloud Engine...'
+                : 'Connecting to Elexon BMRS Analytics API and compiling January 2026 telemetry...'
+            }
+            subMessage={
+              loadingElapsedSec >= 5
+                ? 'Render Cloud Free Tier instance is warming up from inactivity (~20-30s on first load). Live outturn telemetry and KPI metrics will appear automatically once initialized.'
+                : null
+            }
             height="400px"
           />
         ) : (
